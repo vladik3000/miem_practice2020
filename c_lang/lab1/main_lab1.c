@@ -3,6 +3,10 @@
 
 int     average_between_negatives(int *table, int length);
 
+
+
+
+
 int     main(void)
 {
     int answer;
