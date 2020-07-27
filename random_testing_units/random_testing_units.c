@@ -123,9 +123,9 @@ char        **create_random_strings(size_t num_of_strings, const char *charset, 
 
 int         *create_random_int_array(size_t length, size_t modulo)
 {
-    int *arr;
-    size_t i;
-    static size_t shift = 1; 
+    int             *arr;
+    size_t          i;
+    static size_t   shift = 1; 
 
     i = 0;
     if (length == 0)
