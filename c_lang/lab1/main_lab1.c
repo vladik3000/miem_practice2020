@@ -1,7 +1,7 @@
 #include <assert.h>
 #include <stdio.h>
 #include "../../random_testing_units/random_testing_units.h"
-
+#define MAX_TESTS 10
 
 int		average_between_negatives(int *table, int length);
 
@@ -38,7 +38,7 @@ int		abn(int *table, int length)
 	}
 	if (i == j)
 		return (table[i]);
-	if (0 == j || length - 1 == i)
+	if (0 == j || length - 1 == i || i > j)
 		return (-1);
 	while (i <= j)
 	{
@@ -46,8 +46,6 @@ int		abn(int *table, int length)
 		i++;
 		n++;
 	}
-	if (0 == n)
-		return (-1);
 	return (sum / n);
 }
 
@@ -65,10 +63,10 @@ int     main(void)
 	j = 0;
 	i = 0;
 	n = 1;
-	while (n <= 1000)
+	while (n <= MAX_TESTS)
 	{
 		i = 0;
-		arr = create_random_int_arrays(100, n, n);
+		arr = create_random_int_arrays(100, n, n * n);
 		
 		while (NULL != arr[i] || 0 == n)
 		{
@@ -93,7 +91,6 @@ int     main(void)
 		delete_page((void **)arr);
 		n++;
 	}
-	if (0 == errors)
-		printf("all tests passed:)");
+	printf("total errors:%d\n", errors);
     return (errors);
 }
