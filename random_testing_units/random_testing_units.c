@@ -19,12 +19,12 @@ static uint32_t    triple32(uint32_t n) /*might use it later for better randomiz
 {
     n ^= n >> 0x11;
     n *= 0xed5ad4bbu;
-	n ^= n >> 0x0b;
-	n *= 0xac4c1b51u;
-	n ^= n >> 0x0f;
-	n *= 0x31848babu;
-	n ^= n >> 0x0e;
-	return (n);
+    n ^= n >> 0x0b;
+    n *= 0xac4c1b51u;
+    n ^= n >> 0x0f;
+    n *= 0x31848babu;
+    n ^= n >> 0x0e;
+    return (n);
 }
 
 

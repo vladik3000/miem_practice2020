@@ -1,24 +1,99 @@
 #include <assert.h>
 #include <stdio.h>
-
-int     average_between_negatives(int *table, int length);
-
+#include "../../random_testing_units/random_testing_units.h"
 
 
+int		average_between_negatives(int *table, int length);
 
+int		abn(int *table, int length)
+{
+	int i;
+	int j;
+	int n;
+	int sum;
+
+	i = 0;
+	j = length - 1;
+	sum = 0;
+	n = 0;
+	if (length <= 2 || NULL == table)
+		return (-1);
+	while (i < length)
+	{
+		if (table[i] < 0)
+		{
+			i++;
+			break;
+		}
+		i++;
+	}
+	while (j > 0)
+	{
+		if (table[j] < 0)
+		{
+			j--;
+			break;
+		}
+		j--;
+	}
+	if (i == j)
+		return (table[i]);
+	if (0 == j || length - 1 == i)
+		return (-1);
+	while (i <= j)
+	{
+		sum += table[i];
+		i++;
+		n++;
+	}
+	if (0 == n)
+		return (-1);
+	return (sum / n);
+}
 
 int     main(void)
 {
-    int answer;
+	int n;
+	int **arr;
+	int i;
+	int j;
+	int expected;
+	int yours;
+	int errors;
 
-    int arr[4] = {1, 2, 3, 4};
-    answer = average_between_negatives(arr, 4);
-    if (answer != -1)
-    {
-        printf("test1: error:\nexpected:%d\nyours:%d\n:(", -1, answer);
-        return (0);
-    }
-    else
-        printf("test1: good :)\n");
-    return (0);
+	errors = 0;
+	j = 0;
+	i = 0;
+	n = 1;
+	while (n <= 1000)
+	{
+		i = 0;
+		arr = create_random_int_arrays(100, n, n);
+		
+		while (NULL != arr[i] || 0 == n)
+		{
+			expected = abn(arr[i], n);
+			yours = average_between_negatives(arr[i], n);
+			if (yours != expected)
+			{
+				errors += 1;
+				j = 0;
+				printf("test%d failed:(\n", n);
+				printf("input array:");
+				while (j < n)
+				{
+					printf("%d ", arr[i][j]);
+					j++;
+				}
+				printf("\n");
+				printf("expected:%d\nyours:%d\n", expected, yours);
+			}
+			i++;
+		}
+		delete_page((void **)arr);
+		n++;
+	}
+	if (0 == errors)
+		printf("all tests passed:)");
+    return (errors);
 }
