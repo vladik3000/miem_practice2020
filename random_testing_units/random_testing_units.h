@@ -1,11 +1,11 @@
 #ifndef RANDOM_TESTING_UNITS_H
 
-# define RANDOM_TESTING_UNITS_H
+#define RANDOM_TESTING_UNITS_H
 
-# include <stdlib.h>
-# include <time.h>
-# include <string.h>
-# include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
+#include <string.h>
+#include <stdio.h>
 
 float       *create_random_float_array(const size_t size, size_t modulo);
 float       **create_random_float_arrays(const size_t num_of_arrays,
