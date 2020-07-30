@@ -31,16 +31,18 @@ set -o nounset                              # Treat unset variables as an error
 # 4) files: names of the files needed to compile executable except main.c
 # or main.cpp (depends on the language) separated by space
 #
-# 5) leakcheck: 0 or 1 (memory leak check)
+# 5) leakcheck: manually in makefile
+#
+# 6) standard of language when [-std=standard] flag is used
 #
 language="c"
-gitpath="https://github.com/vladik3000/test.git"
+gitpath="https://github.com/vladik3000/test.git" #test repository
 command_line_arg_check_not_req=1
-leakcheck=1
 files='main.c aplusb.c'
+std=""
 #===============================================================================
 
-echo "evaluation begins...\nmake sure you set the variables correctly..."
+echo -ne "evaluation begins...\nmake sure you set the variables correctly...\n"
 
 if [ $language != "c" ] && [ $lanuage != "c++" ]; then
 	echo "wrong language"
