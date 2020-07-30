@@ -29,19 +29,20 @@ FILES_STUDENT=$(addprefix $(STU_DIR), $(FILES_))
 OBJ_CORRECT=$(FILES_CORRECT:$(EXT)=.o)
 OBJ_STUDENT=$(FILES_STUDENT:$(EXT)=.o)
 
-all: random $(NAME_CORRECT) $(NAME_STUDENT) random_testing_units/random_testing_units.h
+all: random $(NAME_CORRECT) $(NAME_STUDENT)
 
 $(OBJ_CORRECT): %.o: %.$(EXT)
-	$(CC) -c $(FLAGS) $< -o
+	$(CC) -c $(FLAGS) $< -o $(addprefix $(OBJ_CORRECT_DIR), $@)
 
 $(NAME_CORRECT): $(OBJ_CORRECT)
 	$(CC) $(FLAGS) $(OBJ_CORRECT) -o $(NAME_CORRECT)
 
-$(OBJ_STUDENT): %.o: %.$(EXT) 
+$(OBJ_STUDENT): %.o: %.$(EXT)
+	$(CC) -c $(FLAGS) $< -o $(addprefix $(OBJ_STUDENT_DIR), $@)
 
 $(NAME_STUDENT): $(OBJ_STUDENT)
 	$(CC) $(FLAGS) $(OBJ_STUDENT) -o $(NAME_STUDENT)
 
 
-random:
+random: ../random_testing_units/random_testing_units.h
 	$(CC) -c $(FLAGS) $(RANDOM_UTILS)
