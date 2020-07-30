@@ -35,12 +35,12 @@ $(OBJ_CORRECT): %.o: %.$(EXT)
 	$(CC) -c $(FLAGS) $< -o
 
 $(NAME_CORRECT): $(OBJ_CORRECT)
-	gcc $(FLAGS) $(OBJ_CORRECT) -o $(NAME_CORRECT)
+	$(CC) $(FLAGS) $(OBJ_CORRECT) -o $(NAME_CORRECT)
 
 $(OBJ_STUDENT): %.o: %.$(EXT) 
 
 $(NAME_STUDENT): $(OBJ_STUDENT)
-	$(CC) $(FLAGS) $(OBJ_STUDENT)
+	$(CC) $(FLAGS) $(OBJ_STUDENT) -o $(NAME_STUDENT)
 
 
 random:

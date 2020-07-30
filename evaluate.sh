@@ -11,7 +11,7 @@
 #  REQUIREMENTS: ---
 #          BUGS: ---
 #         NOTES: ---
-#        AUTHOR: VLADISLAV KRASKOV, 
+#        AUTHOR: VLADISLAV KRASKOV 
 #  ORGANIZATION: MIEM HSE
 #       CREATED: 07/29/2020 15:50
 #      REVISION:  ---
@@ -29,7 +29,7 @@ set -o nounset                              # Treat unset variables as an error
 # 3) command_line_arg_check: 0 or 1 (whether the command line arg tests needed)
 #
 # 4) files: names of the files needed to compile executable except main.c
-# or main.cc (depends on the language) separated by space
+# or main.cpp (depends on the language) separated by space
 #
 # 5) leakcheck: 0 or 1 (memory leak check)
 #
