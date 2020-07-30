@@ -1,9 +1,9 @@
 #!/bin/bash - 
 #===============================================================================
 #
-#          FILE: asd.sh
+#          FILE: evaluate.sh
 # 
-#         USAGE: ./asd.sh 
+#         USAGE: ./evaluate.sh 
 # 
 #   DESCRIPTION: 
 # 
