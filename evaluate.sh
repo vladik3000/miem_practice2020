@@ -26,7 +26,7 @@ set -o nounset                              # Treat unset variables as an error
 #
 # 2) gitpath: url of student's git repository
 #
-# 3) command_line_arg_check: 0 or 1 (whether the command line arg tests needed)
+# 3) command_line_arg_check_not_req: 0 or 1 (whether the command line arg tests needed)
 #
 # 4) files: names of the files needed to compile executable except main.c
 # or main.cpp (depends on the language) separated by space
@@ -34,23 +34,22 @@ set -o nounset                              # Treat unset variables as an error
 # 5) leakcheck: 0 or 1 (memory leak check)
 #
 language="c"
-gitpath="gitpath"
-command_line_arg_check=1
+gitpath="https://github.com/vladik3000/test.git"
+command_line_arg_check_not_req=1
 leakcheck=1
 files="average_between_negatives.c"
 #===============================================================================
 
 echo "evaluation begins...\nmake sure you set the variables correctly..."
 
-git clone $gitpath exercise/student || echo "invalid git path" || exit
+git clone $gitpath exercise/student_task || echo "invalid git path" || exit
 
-if [ $language -ne "c" && $lanuage -ne "c++" ]; then
+if [ $language != "c" ] && [ $lanuage != "c++" ]; then
 	echo "wrong language"
 	exit
 fi
 
-[ language -eq "c" ] && make -c exercise LANG=1 CFILES=files
-[ language -eq "c++" ] && make -c exercise LANG=0 CFILES=files
 
-
+[ $language == "c" ] && make -C exercise LANG=1 CFILES=files COMMAND_LINE_ARG_NOT_REQ=1
+[ $language == "c++" ] && make -C exercise LANG=0 CFILES=files COMMAND_LINE_ARG_NOT_REQ=1
 

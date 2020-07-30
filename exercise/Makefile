@@ -9,13 +9,13 @@ STU_DIR=student_task
 SRC=$(CFILES)
 
 ifeq ($(LANG), 1)
-	MAIN_CORRECT=main_correct.c
-	MAIN_STUDENT=main_student.c
+#	MAIN_CORRECT=main_correct.c
+#	MAIN_STUDENT=main_student.c
 	CC=gcc
 	EXT=.c
 else
-	MAIN_CORRECT=main_correct.cpp
-	MAIN_STUDENT=main_student.cpp
+#	MAIN_CORRECT=main_correct.cpp
+#	MAIN_STUDENT=main_student.cpp
 	CC=g++
 	EXT=.cpp
 endif
@@ -29,7 +29,7 @@ FILES_STUDENT=$(addprefix $(STU_DIR), $(FILES_))
 OBJ_CORRECT=$(addprefix $(OBJ_CORRECT_DIR), $(FILES_CORRECT:$(EXT)=.o))
 OBJ_STUDENT=$(addprefix $(OBJ_STUDENT_DIR), $(FILES_STUDENT:$(EXT)=.o))
 
-all: random $(NAME_CORRECT) $(NAME_STUDENT)
+all: random move_main $(NAME_CORRECT) $(NAME_STUDENT)
 
 $(OBJ_CORRECT): $(OBJ_CORRECT_DIR)%.o: $(COR_DIR)%.$(EXT)
 	mkdir -p $(OBJ_CORRECT_DIR)
@@ -46,7 +46,7 @@ $(NAME_STUDENT): $(OBJ_STUDENT)
 	$(CC) $(FLAGS) $(OBJ_STUDENT) -o $(NAME_STUDENT)
 
 clean:
-	/bin/rm -rf $(OBJ_STUDENT_DIR) $(OBJ_CORRECT_DIR)
+	/bin/rm -rf $(OBJ_STUDENT_DIR) $(OBJ_CORRECT_DIR) random_testing_units.o
 
 fclean: clean
 	/bin/rm -rf $(NAME_CORRECT) $(NAME_STUDENT)
@@ -56,4 +56,9 @@ re: fclean all
 random: ../random_testing_units/random_testing_units.h
 	$(CC) -c $(FLAGS) $(RANDOM_UTILS)
 
-.PHONY: all clean fclean re random
+move_main:
+ifeq ($(COMMAND_LINE_ARG_NOT_REQ), 1)
+	cp correct_task/main$(EXT) student_task
+endif
+		
+.PHONY: all clean fclean re random move_main

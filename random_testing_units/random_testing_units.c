@@ -15,7 +15,8 @@ void     delete_page(void **page) // free 2d array
     page = NULL;
 }
 
-static uint32_t    triple32(uint32_t n) /*might use it later for better randomiztion*/
+/*might use it later for better randomization
+static uint32_t    triple32(uint32_t n) 
 {
     n ^= n >> 0x11;
     n *= 0xed5ad4bbu;
@@ -26,8 +27,7 @@ static uint32_t    triple32(uint32_t n) /*might use it later for better randomiz
     n ^= n >> 0x0e;
     return (n);
 }
-
-
+*/
 float       *create_random_float_array(const size_t size, size_t modulo)
 {
     float           *arr;
