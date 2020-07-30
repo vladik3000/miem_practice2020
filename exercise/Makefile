@@ -1,4 +1,4 @@
-NME_STUDENT=student
+NAME_STUDENT=student
 NAME_CORRECT=correct
 FLAGS=-Wall -Wextra
 OBJ_STUDENT_DIR=obj_student/
@@ -34,7 +34,7 @@ all: random copy_main $(NAME_STUDENT) $(NAME_CORRECT)
 $(OBJ_CORRECT): $(OBJ_CORRECT_DIR)%.o: $(COR_DIR)%$(EXT)
 	$(CC) -c $(FLAGS) $< -o $@
 
-$(NAME_CORRECT): $(OBJ_CORRECT)
+$(NAME_CORRECT): $(OBJ_CORRECT) $(NAME_STUDENT)
 	$(CC) $(FLAGS) $(OBJ_CORRECT) random_testing_units.o -o $(NAME_CORRECT)
 
 $(OBJ_STUDENT): $(OBJ_STUDENT_DIR)%.o: $(STU_DIR)%$(EXT)

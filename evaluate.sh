@@ -38,7 +38,6 @@ gitpath="https://github.com/vladik3000/test.git"
 command_line_arg_check_not_req=1
 leakcheck=1
 files='main.c aplusb.c'
-echo $files
 #===============================================================================
 
 echo "evaluation begins...\nmake sure you set the variables correctly..."
