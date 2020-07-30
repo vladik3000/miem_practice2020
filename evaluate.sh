@@ -37,19 +37,19 @@ language="c"
 gitpath="https://github.com/vladik3000/test.git"
 command_line_arg_check_not_req=1
 leakcheck=1
-files="average_between_negatives.c"
+files='main.c aplusb.c'
+echo $files
 #===============================================================================
 
 echo "evaluation begins...\nmake sure you set the variables correctly..."
-
-git clone $gitpath exercise/student_task || echo "invalid git path" || exit
 
 if [ $language != "c" ] && [ $lanuage != "c++" ]; then
 	echo "wrong language"
 	exit
 fi
 
+git clone $gitpath exercise/student_task || echo "invalid git path" || exit
 
-[ $language == "c" ] && make -C exercise LANG=1 CFILES=files COMMAND_LINE_ARG_NOT_REQ=1
-[ $language == "c++" ] && make -C exercise LANG=0 CFILES=files COMMAND_LINE_ARG_NOT_REQ=1
+[ $language == "c" ] && make -C exercise LANG=1 CFILES="$files" COMMAND_LINE_ARG_NOT_REQ=1
+[ $language == "c++" ] && make -C exercise LANG=0 CFILES="$files" COMMAND_LINE_ARG_NOT_REQ=1
 

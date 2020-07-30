@@ -1,11 +1,11 @@
-NAME_STUDENT=student
+NME_STUDENT=student
 NAME_CORRECT=correct
 FLAGS=-Wall -Wextra
-OBJ_STUDENT_DIR=obj_student
-OBJ_CORRECT_DIR=obj_correct
+OBJ_STUDENT_DIR=obj_student/
+OBJ_CORRECT_DIR=obj_correct/
 RANDOM_UTILS=../random_testing_units/random_testing_units.c
-COR_DIR=correct_task
-STU_DIR=student_task
+COR_DIR=correct_task/
+STU_DIR=student_task/
 SRC=$(CFILES)
 
 ifeq ($(LANG), 1)
@@ -20,30 +20,28 @@ else
 	EXT=.cpp
 endif
 
-FILES_=$(CFILES)
-FILES_+=$(MAIN_CORRECT)
+#$FILESS=$(CFILES)
+#FILES_+=$(MAIN_CORRECT)
 
-FILES_CORRECT=$(addprefix $(COR_DIR), $(FILES_)) 
-FILES_STUDENT=$(addprefix $(STU_DIR), $(FILES_))
+FILES_CORRECT=$(addprefix $(COR_DIR), $(CFILES)) 
+FILES_STUDENT=$(addprefix $(STU_DIR), $(CFILES))
 
-OBJ_CORRECT=$(addprefix $(OBJ_CORRECT_DIR), $(FILES_CORRECT:$(EXT)=.o))
-OBJ_STUDENT=$(addprefix $(OBJ_STUDENT_DIR), $(FILES_STUDENT:$(EXT)=.o))
+OBJ_CORRECT=$(addprefix $(OBJ_CORRECT_DIR), $(CFILES:$(EXT)=.o))
+OBJ_STUDENT=$(addprefix $(OBJ_STUDENT_DIR), $(CFILES:$(EXT)=.o))
 
-all: random move_main $(NAME_CORRECT) $(NAME_STUDENT)
+all: random copy_main $(NAME_STUDENT) $(NAME_CORRECT)
 
-$(OBJ_CORRECT): $(OBJ_CORRECT_DIR)%.o: $(COR_DIR)%.$(EXT)
-	mkdir -p $(OBJ_CORRECT_DIR)
+$(OBJ_CORRECT): $(OBJ_CORRECT_DIR)%.o: $(COR_DIR)%$(EXT)
 	$(CC) -c $(FLAGS) $< -o $@
 
 $(NAME_CORRECT): $(OBJ_CORRECT)
-	$(CC) $(FLAGS) $(OBJ_CORRECT) -o $(NAME_CORRECT)
+	$(CC) $(FLAGS) $(OBJ_CORRECT) random_testing_units.o -o $(NAME_CORRECT)
 
-$(OBJ_STUDENT): $(OBJ_STUDENT_DIR)%.o: $(STU_DIR)%.$(EXT)
-	mkdir -p $(OBJ_STUDENT_DIR)
+$(OBJ_STUDENT): $(OBJ_STUDENT_DIR)%.o: $(STU_DIR)%$(EXT)
 	$(CC) -c $(FLAGS) $< -o $@
 
 $(NAME_STUDENT): $(OBJ_STUDENT)
-	$(CC) $(FLAGS) $(OBJ_STUDENT) -o $(NAME_STUDENT)
+	$(CC) $(FLAGS) $(OBJ_STUDENT) random_testing_units.o -o $(NAME_STUDENT)
 
 clean:
 	/bin/rm -rf $(OBJ_STUDENT_DIR) $(OBJ_CORRECT_DIR) random_testing_units.o
@@ -54,9 +52,10 @@ fclean: clean
 re: fclean all
 
 random: ../random_testing_units/random_testing_units.h
+	mkdir -p $(OBJ_CORRECT_DIR) $(OBJ_STUDENT_DIR)
 	$(CC) -c $(FLAGS) $(RANDOM_UTILS)
 
-move_main:
+copy_main:
 ifeq ($(COMMAND_LINE_ARG_NOT_REQ), 1)
 	cp correct_task/main$(EXT) student_task
 endif
