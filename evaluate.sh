@@ -34,7 +34,7 @@ set -o nounset                              # Treat unset variables as an error
 # 5) leakcheck: 0 or 1 (memory leak check)
 #
 language="c"
-gitpath="asd"
+gitpath="gitpath"
 command_line_arg_check=1
 leakcheck=1
 files="average_between_negatives.c"
