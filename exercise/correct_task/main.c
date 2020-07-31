@@ -1,9 +1,16 @@
 #include <stdio.h>
 
-int aplusb(int a, int b);
 
-int main(void)
+int main(int ac, char **av)
 {
-	printf("%d\n%d\n", aplusb(1, 2), aplusb(3, 4));
+	int i;
+
+	i = 1;
+	while (av[i])
+	{
+		printf("%s\n", av[i]);
+		i++;
+	}
 	return (0);
+	ac--;
 }

@@ -31,15 +31,16 @@ set -o nounset                              # Treat unset variables as an error
 # 4) files: names of the files needed to compile executable except main.c
 # or main.cpp (depends on the language) separated by space
 #
-# 5) leakcheck: manually in makefile
+# 5) leakcheck: 0 or 1 whether you want to check memory leaks
 #
 # 6) standard of language when [-std=standard] flag is used
 #
 language="c"
 gitpath="https://github.com/vladik3000/test.git" #test repository
-command_line_arg_check_not_req=1
-files='main.c aplusb.c'
-std=""
+args=1
+files='main.c'
+std="c99"
+leakcheck=1
 #===============================================================================
 
 echo -ne "evaluation begins...\nmake sure you set the variables correctly...\n"
@@ -51,6 +52,6 @@ fi
 
 git clone $gitpath exercise/student_task || echo "invalid git path" || exit
 
-[ $language == "c" ] && make -C exercise LANG=1 CFILES="$files" COMMAND_LINE_ARG_NOT_REQ=1
-[ $language == "c++" ] && make -C exercise LANG=0 CFILES="$files" COMMAND_LINE_ARG_NOT_REQ=1
+[ $language == "c" ] && make -C exercise LANG=1 CFILES="$files" COMMAND_ARGS=$args STD="$std" LEAK=$leakcheck
+[ $language == "c++" ] && make -C exercise LANG=0 CFILES="$files" COMMAND_ARGS=$args STD="$std" LEAK=$leakcheck
 
