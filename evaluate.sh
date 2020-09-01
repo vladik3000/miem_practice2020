@@ -24,7 +24,7 @@ set -o nounset                              # Treat unset variables as an error
 #===============================================================================
 # 1) language: "c" or "c++"
 #
-# 2) gitpath: url of student's git repository
+# 2) gitpath: url of student's git repository (first argument of this script)
 #
 # 3) command_line_arg_check_not_req: 0 or 1 (whether the command line arg tests needed)
 #
@@ -36,11 +36,12 @@ set -o nounset                              # Treat unset variables as an error
 # 6) standard of language when [-std=standard] flag is used
 #
 language="c"
-gitpath="https://github.com/vladik3000/test.git" #test repository
+gitpath=$1 #test repository
 args=1
 files='main.c'
 std="c99"
 leakcheck=1
+dir=$2
 #===============================================================================
 
 echo -ne "evaluation begins...\nmake sure you set the variables correctly...\n"
@@ -50,8 +51,8 @@ if [ $language != "c" ] && [ $lanuage != "c++" ]; then
 	exit
 fi
 
-git clone $gitpath exercise/student_task || echo "invalid git path" || exit
+git clone $gitpath exercise/$2 || echo "invalid git path" || exit
 
-[ $language == "c" ] && make -C exercise LANG=1 CFILES="$files" COMMAND_ARGS=$args STD="$std" LEAK=$leakcheck
-[ $language == "c++" ] && make -C exercise LANG=0 CFILES="$files" COMMAND_ARGS=$args STD="$std" LEAK=$leakcheck
+[ $language == "c" ] && make -C exercise LANG=1 CFILES="$files" COMMAND_ARGS=$args STD="$std" LEAK=$leakcheck DIR=$dir
+[ $language == "c++" ] && make -C exercise LANG=0 CFILES="$files" COMMAND_ARGS=$args STD="$std" LEAK=$leakcheck DIR=$dir
 

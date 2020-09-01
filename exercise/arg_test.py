@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 import os, subprocess, sys
 
 OKGREEN = '\033[92m'
