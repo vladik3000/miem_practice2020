@@ -30,7 +30,7 @@ ifeq ($(COMMAND_ARGS), 0)
 	echo "TEST $(OK)OK :)$(NC)" && rm -rf logs/diffs/difference_$(NAME_STUDENT) && echo "OK" > logs/results/result_$(NAME_STUDENT) \ 
 	|| echo "$(FAIL)TEST FAILED :($(NC)" && echo "TEST FAILED" > logs/results/result_$(NAME_STUDENT)
 else
-	python3 arg_test.py $(LEAK) 
+	python3 arg_test.py $(LEAK) ./$(NAME_STUDENT) 
 endif
 	@rm -rf student.dSYM
 

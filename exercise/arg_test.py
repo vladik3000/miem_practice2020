@@ -6,8 +6,7 @@ OKGREEN = '\033[92m'
 FAIL = '\033[91m'
 ENDC = '\033[0m'
 
-arglist_student = ["./student"]
-arglist_correct = ["./correct"]
+arglist_student = ["./task_"]
 
 valgrind = ["valgrind", "--leak-check=full", "--error-exitcode=1"]
 
