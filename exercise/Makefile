@@ -13,7 +13,7 @@ NC='\033[0m'
 
 STDRD=$(STD)
 ifeq ($(LANG), 1)
-	CC=gcc
+	CC=clang
 	EXT=.c
 else
 	CC=g++
