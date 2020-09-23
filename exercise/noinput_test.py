@@ -27,7 +27,7 @@ if os.path.getsize(filediff) == 0:
     with open(logname, "w+") as log:
         log.write("OK\n")
     if int(sys.argv[2]) == 1:
-        leakname = dirname + "/leakchecks/leaklog"
+        leakname = dirname + "leakchecks/leaklog"
         with open(leakname, "w+") as leakfile:
             valgrind += arglist_student
             exitcode = subprocess.call(valgrind, stdout=leakfile, stderr=leakfile)

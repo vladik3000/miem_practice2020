@@ -27,7 +27,7 @@ for subdir, dir, files in os.walk("inputs"):
                 subprocess.call(diffarg, stdout=fdiff)
             logname = dirname + "result"
             if os.path.getsize(filediff) == 0:
-                print(OKGREEN + "OK" + ENDC, end= " ")
+                print(file + ": " + OKGREEN + "OK" + ENDC, end= " ")
                 with open(logname, "a+") as log:
                     log.write(file + ": OK\n")
                 if int(sys.argv[2]) == 1:
@@ -46,5 +46,5 @@ for subdir, dir, files in os.walk("inputs"):
             else:
                 with open(logname, "a+") as log:
                     log.write(file + ": FAILED: see the " + filediff + " for information\n")
-                print(FAIL + "FAILED: see the " + filediff + "for information" + ENDC, end="")
+                print(file + ": " + FAIL + "FAILED: see the " + filediff + "for information" + ENDC, end="")
             print('\n')

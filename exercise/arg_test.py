@@ -29,12 +29,12 @@ for subdir, dir, files in os.walk("inputs"):
                 subprocess.call(diffarg, stdout=fdiff)
             logname = dirname + "result"
             if os.path.getsize(filediff) == 0:
-                print(OKGREEN + "OK" + ENDC, end= " ")
+                print(file + ": " + OKGREEN + "OK :D" + ENDC, end= " ")
                 with open(logname, "a+") as log:
                     log.write(file + ": OK\n")
                 if int(sys.argv[2]) == 1:
                     valgrind += arglist_student
-                    leakname = dirname + "/leakchecks/" + file
+                    leakname = dirname + "leakchecks/" + file
                     with open(leakname, "w+") as leakfile:
                         exitcode = subprocess.call(valgrind, stdout=leakfile, stderr=leakfile)
                     print("leakcheck: ", end="")
@@ -43,10 +43,10 @@ for subdir, dir, files in os.walk("inputs"):
                             print(OKGREEN + "OK" + ENDC, end= " ")
                             log.write("leakcheck: OK\n")
                         else:
-                            print(FAIL + "FAILED" + ENDC, end="")
+                            print(FAIL + "FAILED: see the "+ leakname + " for information" + ENDC, end="")
                             log.write("leakcheck: FAILED: see the" + leakname + " for information\n")
             else:
                 with open(logname, "a+") as log:
                     log.write(file + ": FAILED: see the " + filediff + " for information\n")
-                print(FAIL + "FAILED: see the " + filediff + "for information" + ENDC, end="")
+                print(file + ": " + FAIL + "FAILED: see the " + filediff + " for information" + ENDC, end="")
             print('\n')
