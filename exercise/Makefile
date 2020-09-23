@@ -37,10 +37,10 @@ ifeq ($(CHECKTYPE), $(STDINP))
 endif
 
 $(OBJ_STUDENT): $(OBJ_STUDENT_DIR)%.o: $(STU_DIR)/%$(EXT)
-	@$(CC) -std=$(STDRD) -c $(FLAGS) $< -o $@ &>> $(STU_DIR)/compilation || echo "compilation failed T_T :see the compilation file for info"
+	@$(CC) -std=$(STDRD) -c $(FLAGS) $< -o $@ > $(STU_DIR)/compilation 2>&1 || echo "$(FAIL)compilation failed T_T :see the compilation file for info$(NC)" && exit 1
 
 $(NAME_STUDENT): $(OBJ_STUDENT)
-	@$(CC) -std=$(SRDRD) $(FLAGS) $(OBJ_STUDENT) -o $(NAME_STUDENT) &>> $(STU_DIR)/compilation || echo "compilation failed T_T :see the compilation file for info"
+	@$(CC) -std=$(SRDRD) $(FLAGS) $(OBJ_STUDENT) -o $(NAME_STUDENT) > $(STU_DIR)/compilation 2>&1 || echo "$(FAIL)compilation failed T_T :see the compilation file for info$(NC)" && exit 1
 
 clean:
 	@/bin/rm -rf $(OBJ_STUDENT_DIR)  obj_utils
