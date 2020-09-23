@@ -36,7 +36,7 @@ set -o nounset                              # Treat unset variables as an error
 # 6) standard of language when [-std=standard] flag is used
 language="c"
 gitpath=$1 #test repository
-checktype=3
+checktype=1
 files='main.c'
 std="c99"
 leakcheck=1
@@ -50,8 +50,8 @@ if [ $language != "c" ] && [ $lanuage != "c++" ]; then
 	exit
 fi
 
-git clone $gitpath exercise/$2 || echo "invalid git path" || exit
+git clone $gitpath exercise/$2 &> /dev/null|| echo "invalid git path" || exit
 
-[ $language == "c" ] && make -C exercise LANG=1 CFILES="$files" CHECKTYPE=$checktype STD="$std" LEAK=$leakcheck DIR=$dir
-[ $language == "c++" ] && make -C exercise LANG=0 CFILES="$files" COMMAND_ARGS=$checktype STD="$std" LEAK=$leakcheck DIR=$dir
+[ $language == "c" ] && make -s -C exercise LANG=1 CFILES="$files" CHECKTYPE=$checktype STD="$std" LEAK=$leakcheck DIR=$dir
+[ $language == "c++" ] && make -s -C exercise LANG=0 CFILES="$files" COMMAND_ARGS=$checktype STD="$std" LEAK=$leakcheck DIR=$dir
 

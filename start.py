@@ -7,7 +7,7 @@ name = ""
 def getname(gitpath):
     parts = gitpath.split("/")
     for i in range(len(parts)):
-        if ("github.com" in parts[i] or "gitlab.com" in parts[i]) and parts[i + 1} != None:
+        if ("github.com" in parts[i] or "gitlab.com" in parts[i]) and parts[i + 1] != None:
             return parts[i + 1]
 
 with open("students_git", "r") as file:
