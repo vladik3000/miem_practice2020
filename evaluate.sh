@@ -36,14 +36,14 @@ set -o nounset                              # Treat unset variables as an error
 # 6) standard of language when [-std=standard] flag is used
 language="c"
 gitpath=$1 #test repository
-checktype=1
+checktype=3
 files='main.c'
 std="c99"
-leakcheck=1
+leakcheck=0
 dir=$2
 #===============================================================================
 
-echo -ne "evaluation begins...\nmake sure you set the variables correctly...\n"
+echo -ne "evaluation begins...for $2 \nmake sure you set the variables correctly...\n"
 
 if [ $language != "c" ] && [ $lanuage != "c++" ]; then
 	echo "wrong language"

@@ -17,8 +17,6 @@ valgrind = ["valgrind", "--leak-check=full", "--error-exitcode=1"]
 for subdir, dir, files in os.walk("inputs"):
     for file in files:
         with open("inputs/" + file, "r") as stdinput:
-            #args = [line.rstrip() for line in argfile]
-            #arglist_student += args
             student_output_file = dirname + file + "_output"
             correct_output_file = "./correct_outputs/" + file
             diffarg = ["diff", student_output_file, correct_output_file]
