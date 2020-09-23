@@ -3,6 +3,7 @@ import subprocess
 
 gits = list()
 name = ""
+print("STARTING EVALUTAION\nPLEASE MAKE SURE YOU SET THE VARIABLES IN evaluate.sh CORRECTLY!")
 
 def getname(gitpath):
     parts = gitpath.split("/")
@@ -18,5 +19,6 @@ for git in gits:
     name = getname(git)
     if name == None:
         print("invalid git path:", git)
+        print("WHAT THE FUCK")
     else:
         subprocess.call(["./evaluate.sh", git, name])

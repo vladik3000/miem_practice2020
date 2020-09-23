@@ -6,7 +6,7 @@ OKGREEN = '\033[92m'
 FAIL = '\033[91m'
 ENDC = '\033[0m'
 
-dirname = "./" + sys.argv[1] + "/"
+dirname = "./students/" + sys.argv[1] + "/"
 
 binary_name = dirname + "task_" + sys.argv[1]
 

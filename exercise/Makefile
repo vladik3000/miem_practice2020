@@ -1,7 +1,7 @@
 FLAGS=-Wall -Wextra
-STU_DIR=$(DIR)
-NAME_STUDENT=$(DIR)/task_$(STU_DIR)
-OBJ_STUDENT_DIR=$(DIR)/obj_student/
+STU_DIR=students/$(DIR)
+NAME_STUDENT=$(STU_DIR)/task_$(DIR)
+OBJ_STUDENT_DIR=$(STU_DIR)/obj_student/
 
 NOINPUT=1
 ARG=2
@@ -51,13 +51,8 @@ fclean: clean
 re: fclean finish all
 
 makedirs:
+	@chmod 777 students
 	@mkdir -p $(STU_DIR)/obj_student $(STU_DIR)/diffs $(STU_DIR)/leakchecks $(STU_DIR)/outputs 
-
-leakcheck:
-ifeq ($(COMMAND_ARGS), 0)
-	valgrind ./student
-	/bin/rm -rf student.dSYM	
-endif
 
 finish: fclean
 	@/bin/rm -rf $(STU_DIR)* $(STU_DIR).git correct_answer student_answer difference diffs outputs leakchecks student.dSYM
