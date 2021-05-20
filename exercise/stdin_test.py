@@ -6,6 +6,14 @@ OKGREEN = '\033[92m'
 FAIL = '\033[91m'
 ENDC = '\033[0m'
 
+
+def green_text(plaintext):
+    return OK + plaintext + ENDC
+
+def red_text(plaintext):
+    return FAIL + plaintext + ENDC
+
+
 dirname = "./students/" + sys.argv[1] + "/"
 
 binary_name = dirname + "/task_" + sys.argv[1]
@@ -13,6 +21,7 @@ binary_name = dirname + "/task_" + sys.argv[1]
 arglist_student = [binary_name]
 
 valgrind = ["valgrind", "--leak-check=full", "--error-exitcode=1"]
+logname = dirname + "result"
 
 for subdir, dir, files in os.walk("inputs"):
     for file in files:
@@ -25,9 +34,8 @@ for subdir, dir, files in os.walk("inputs"):
                 subprocess.call(arglist_student, stdout=student_output, stdin=stdinput)
             with open(filediff, "w+") as fdiff:
                 subprocess.call(diffarg, stdout=fdiff)
-            logname = dirname + "result"
             if os.path.getsize(filediff) == 0:
-                print(file + ": " + OKGREEN + "OK" + ENDC, end= " ")
+                print(file + ": " + green_text("OK"), end= " ")
                 with open(logname, "a+") as log:
                     log.write(file + ": OK\n")
                 if int(sys.argv[2]) == 1:

@@ -13,6 +13,11 @@ binary_name = dirname + "/task_" + sys.argv[1]
 arglist_student = [binary_name]
 
 valgrind = ["valgrind", "--leak-check=full", "--error-exitcode=1"]
+logname = dirname + "result"
+
+
+
+
 
 for subdir, dir, files in os.walk("inputs"):
     for file in files:
@@ -27,7 +32,6 @@ for subdir, dir, files in os.walk("inputs"):
                 subprocess.call(arglist_student, stdout=student_output)
             with open(filediff, "w+") as fdiff:
                 subprocess.call(diffarg, stdout=fdiff)
-            logname = dirname + "result"
             if os.path.getsize(filediff) == 0:
                 print(file + ": " + OKGREEN + "OK :D" + ENDC, end= " ")
                 with open(logname, "a+") as log:
