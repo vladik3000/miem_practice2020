@@ -19,6 +19,5 @@ for git in gits:
     name = getname(git)
     if name == None:
         print("invalid git path:", git)
-        print("WHAT THE FUCK")
     else:
         subprocess.call(["./evaluate.sh", git, name])
