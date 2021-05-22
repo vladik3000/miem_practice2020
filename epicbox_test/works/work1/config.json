@@ -1,0 +1,40 @@
+{
+    "name": "work1",
+    "type": "multiple",
+    "language": "c",
+    "flags": "-Wall",
+    "default_limits": {
+        "cputime": 1,
+        "realtime": 3,
+        "memory": 64,
+        "processes": -1
+    },
+    "exercises": [
+    {
+        "subname": "ex1",
+        "type": "program",
+        "files": [
+            "main.c"
+            ],
+        "limits": {
+            "cputime": 1,
+            "realtime": 3,
+            "memory": 64,
+            "processes": -1
+        },
+        "tests": {
+            "inputs_path": "works/work1/tests/input_tests",
+            "reference_path": "works/work1/tests/reference",
+            "outputpath": "works/work1/tests/output_tests"
+        }
+    },
+    {
+        "subname": "ex2",
+        "type": "function",
+        "files": [
+            "function.c"
+            ],
+        "path_to_linkfiles": "works/work1/tests/linking_files"
+    }]
+}
+

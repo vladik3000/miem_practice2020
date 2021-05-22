@@ -29,7 +29,6 @@ DIPLOMA:
 'memcheck': (True or False) Проверять ли программу на предмет ошибок по памяти
 (memory leaks, contitional jumps, invalid reads and writes)
 В общем все что на что проверяет valgrind.
-НАПИСАТЬ ЖЕСТКИЙ ВАЛИДАТОР ДЛЯ КОНФИГА С САМОГО УТРА СУКА
 'send_email': (True or False) ??? do i really need this ???
 {
     'name': 'work1',
@@ -56,16 +55,19 @@ DIPLOMA:
             'processes': -1
         }
         'tests: {
-            'inputs_path': 'works/work1/tests/input_tests',
-            'reference_path': 'works/work1/tests/reference',
-            'outputpath': 'works/work1/tests/output_tests
+            'inputs_path': 'works/work1/ex1/tests/input_tests',
+            'outputs_path': 'works/work1/ex1/tests/output_tests'
+            'reference_path': 'works/work1/ex1/tests/reference'
     },
     {
         'subname': 'ex2',
         'type': 'function',
         'files': [
-            'function.c'
+            'function1.c', 'function2.c'
             ],
-        'path_to_linkfiles': 'works/work1/tests/linking_files'
+        'path_to_linkfiles': 'works/work1/ex2/tests/linking_files'
+        'tests': {
+            'inputs_path': 'works/work1/ex2/tests/input_tests'
+            'outputs_path': 'works/work1/ex2/tests/output_tests'
+            'correct_outputs_path': 'works/work1/ex2/tests/correct_outputs'
     }],
-
