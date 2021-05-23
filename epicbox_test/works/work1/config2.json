@@ -1,0 +1,21 @@
+{
+    "name": "work1",
+    "type": "program",
+    "language": "c",
+    "flags": "-Wall",
+    "default_limits": {
+        "cputime": 1,
+        "realtime": 3,
+        "memory": 64,
+        "processes": -1
+    },
+    "files": [
+        "main.c"
+    ],
+    "tests": {
+        "inputs_path": "asdas",
+        "outputs_path": "asdasdsad",
+        "correct_outputs_path": "asdasd"
+    }
+}
+

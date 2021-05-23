@@ -4,7 +4,7 @@
     "language": "c",
     "flags": "-Wall",
     "default_limits": {
-        "cputime": 1,
+        "cputime1": 1,
         "realtime": 3,
         "memory": 64,
         "processes": -1
@@ -23,9 +23,9 @@
             "processes": -1
         },
         "tests": {
-            "inputs_path": "works/work1/tests/input_tests",
-            "reference_path": "works/work1/tests/reference",
-            "outputpath": "works/work1/tests/output_tests"
+            "inputs_path": "works/work1/ex1/tests/input_tests",
+            "reference_path": "works/work1/ex1/tests/reference",
+            "outputs_path": "works/work1/ex1/tests/output_tests"
         }
     },
     {
@@ -34,7 +34,12 @@
         "files": [
             "function.c"
             ],
-        "path_to_linkfiles": "works/work1/tests/linking_files"
+        "path_to_linkfiles": "works/work1/ex2/linking_files",
+        "tests": {
+            "inputs_path": "works/work1/ex2/tests/input_tests",
+            "outputs_path": "works/work1/ex2/tests/output_tests",
+            "correct_outputs_path": "works/work1/ex2/tests/correct_outputs_tests"
+        }
     }]
 }
 
