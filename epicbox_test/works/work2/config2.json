@@ -1,5 +1,5 @@
 {
-    "name": "work1",
+    "name": "work2",
     "type": "program",
     "language": "c",
     "flags": "-Wall",
@@ -13,9 +13,9 @@
         "main.c"
     ],
     "tests": {
-        "inputs_path": "asdas",
-        "outputs_path": "asdasdsad",
-        "correct_outputs_path": "asdasd"
+        "inputs_path": "works/work2/tests/inputs_path",
+        "outputs_path": "works/work2/tests/outputs_path",
+        "correct_outputs_path": "works/work2/tests/correct_outputs_path"
     }
 }
 

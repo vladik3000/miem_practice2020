@@ -4,7 +4,7 @@
     "language": "c",
     "flags": "-Wall",
     "default_limits": {
-        "cputime1": 1,
+        "cputime": 1,
         "realtime": 3,
         "memory": 64,
         "processes": -1

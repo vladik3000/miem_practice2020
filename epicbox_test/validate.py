@@ -1,4 +1,5 @@
 import json
+from sys import argv
 from os import path
 from exceptions import InvalidConfigException
 #ADD CORRECT_OUTPUTS_PATHS TO VALIDATION
@@ -108,7 +109,7 @@ def validate_work_config(work_config_path: str):
                     raise InvalidConfigException("Exercise tests 'inputs_path' is not set :(")
                 if not isinstance(exercise['tests']['inputs_path'], str):
                     raise InvalidConfigException("Exercise tests inputs path should be str type :(")
-                if not path.exists(exerise['tests']['inputs_path']) or not path.isdir(exercise['tests']['inputs_path']):
+                if not path.exists(exercise['tests']['inputs_path']) or not path.isdir(exercise['tests']['inputs_path']):
                     raise InvalidConfigException("Exercise 'inputs_path' no such directory")
                 if 'outputs_path' not in exercise['tests']:
                     raise InvalidConfigException("Excercise tests outputs path is not set :(")
@@ -128,7 +129,7 @@ def validate_work_config(work_config_path: str):
                         raise InvalidConfigException("Exercise 'correct_output_path' is not set :)\nYou can set 'reference_path' instead")
         return True
 
-if validate_work_config("config2.json"):
+if validate_work_config(argv[1]):
     print("CONFIG VALID")
 else:
     print("CONFIG BAD :(")
