@@ -1,7 +1,7 @@
 from aiohttp import web
 import json
 import jsonschema
-
+from handler import proccess_message
 #message schema that student should sent via HTTP (CHANGE TO NORMAL ONE)
 message_schema = {
         'type': 'object',
@@ -20,17 +20,19 @@ async def hello(request):
 async def post_handler(request):
     try:
         message = await request.json()
+        print("MESSAGE RECIEVED", message)
         jsonschema.validate(instance=message, schema=message_schema)
     except Exception as e:
         return web.Response(text=str(e))
-    message_handler = MessageHandler(message)
-    return web.Response(text=message_handler.response)
-    return web.Response(text="JSON READ")
-
+    response = proccess_message(message)
+    return web.Response(text=response)
 
 
 app = web.Application()
 app.add_routes([web.get('/', hello)])
 app.add_routes([web.post('/', post_handler)])
-web.run_app(app)
+try:
+    web.run_app(app)
+except KeyboardInterrupt:
+    print("CTRL-C Recieved: stopped")
 

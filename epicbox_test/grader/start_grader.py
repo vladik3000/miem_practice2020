@@ -2,31 +2,32 @@ from time import sleep
 from typing import Any
 #from os import getenv
 
-#import pika.exceptions
+import pika.exceptions
 import epicbox.exceptions
 import requests.exceptions
 #import importlib
 import socket
 
-import queue_config.rabbitmq
+from queue_configuration import rabbitmq_example
 
-#from external_grader.config import CONNECTION_RETRY_TIME, QUEUE_CONFIG_NAME
-#from external_grader.logs import get_logger
-#from external_grader.broker_handlers.rabbitmq import (
-#    receive_messages as rabbitmq_receive,
-#)
-from external_grader.broker_handlers.xqueue import receive_messages as xqueue_receive
+from config import CONNECTION_RETRY_TIME, QUEUE_CONFIG_NAME
+from logs import get_logger
+from broker.rabbitmq import (
+    receive_messages as rabbitmq_receive,
+)
+#from external_grader.broker_handlers.xqueue import receive_messages as xqueue_receive
 
 
 def start_grader() -> None:
     """
     Start main grader loop.
     """
-    #logger = get_logger("start_grader")
+    logger = get_logger("start_grader")
 
     try:
         while True:
-            listen_to_broker(queue_config)
+            listen_to_broker(rabbitmq_example)
+            #listen_to_broker(queue_config)
             sleep(CONNECTION_RETRY_TIME)
     except AttributeError as exception:
         logger.error(exception, exc_info=True)
@@ -74,5 +75,4 @@ def listen_to_broker(queue_config: Any):
         logger.error("Unknown message broker type: %s", queue_config.TYPE)
 
 
-if __name__ == "__main__":
-    start_grader()
+start_grader()

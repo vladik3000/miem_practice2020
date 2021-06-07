@@ -1,0 +1,39 @@
+version: '3'
+services:
+  server:
+    image: server
+    restart: always
+    ports:
+      - 5700:5700
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./works/:/works/
+      - ./server/:/server/
+      - ./groups/:/groups/
+    command: ['python3', '/server/server.py']
+    depends_on:
+      - rabbitmq
+      - grader
+  grader:
+    image: grader
+    restart: always
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./queue_configuration:/grader/queue_configuration
+      - ./works/:/works/
+      - ./groups/:/groups/
+      - ./results/:/results/
+      - ./grader/:/grader/
+      - ./submissions/:/submissions/
+    command: ['python3', '/grader/start_grader.py']
+    depends_on:
+      - rabbitmq
+  rabbitmq:
+    image: rabbitmq:3-management-alpine
+    restart: always
+    ports:
+      - 5672:5672
+      - 15672:15672
+    environment:
+      - RABBITMQ_DEFAULT_USER=user
+      - RABBITMQ_DEFAULT_PASS=jn0oSx3i2SkV5TlQAFVy

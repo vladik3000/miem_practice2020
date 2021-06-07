@@ -7,13 +7,13 @@ PROFILES = {
     },
     'gcc_run': {
         'docker_image': 'test',
-        'user': 'root',
+        'user': 'student',
         'read_only': True,
         'network_disabled': False,
     },
     'valgrind_check': {
         'docker_image': 'test',
-        'user': 'root',
+        'user': 'student',
         'read_only': False,
         'network_disabled': True,
     },
@@ -21,6 +21,7 @@ PROFILES = {
 
 
 epicbox.configure(profiles=PROFILES);
+
 
 untrusted_code = ''
 with open('main.c', 'r') as f:

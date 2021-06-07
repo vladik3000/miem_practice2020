@@ -3,6 +3,8 @@
     "type": "multiple",
     "language": "c",
     "flags": "-Wall",
+    "stop_if_fails": true,
+    "memcheck": false,
     "default_limits": {
         "cputime": 1,
         "realtime": 3,
@@ -11,33 +13,31 @@
     },
     "exercises": [
     {
-        "subname": "ex1",
+        "name": "ex1",
         "type": "program",
         "files": [
             "main.c"
             ],
         "limits": {
-            "cputime": 1,
-            "realtime": 3,
-            "memory": 64,
+            "cputime": 4,
+            "realtime": 10,
+            "memory": 100,
             "processes": -1
         },
         "tests": {
             "inputs_path": "works/work1/ex1/tests/input_tests",
-            "reference_path": "works/work1/ex1/tests/reference",
-            "outputs_path": "works/work1/ex1/tests/output_tests"
+            "reference_path": "works/work1/ex1/tests/reference"
         }
     },
     {
-        "subname": "ex2",
+        "name": "ex2",
         "type": "function",
         "files": [
             "function.c"
             ],
-        "path_to_linkfiles": "works/work1/ex2/linking_files",
+        "linkfiles": "works/work1/ex2/linking_files",
         "tests": {
             "inputs_path": "works/work1/ex2/tests/input_tests",
-            "outputs_path": "works/work1/ex2/tests/output_tests",
             "correct_outputs_path": "works/work1/ex2/tests/correct_outputs_tests"
         }
     }]

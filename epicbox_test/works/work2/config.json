@@ -3,6 +3,8 @@
     "type": "program",
     "language": "c",
     "flags": "-Wall",
+    "stop_if_fails": true,
+    "memcheck": false,
     "default_limits": {
         "cputime": 1,
         "realtime": 3,
