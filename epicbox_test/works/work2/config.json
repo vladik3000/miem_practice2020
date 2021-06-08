@@ -15,9 +15,9 @@
         "main.c"
     ],
     "tests": {
-        "inputs_path": "works/work2/tests/inputs_path",
-        "outputs_path": "works/work2/tests/outputs_path",
-        "correct_outputs_path": "works/work2/tests/correct_outputs_path"
+        "inputs_path": "work2/tests/inputs",
+        "outputs_path": "work2/tests/outputs_path",
+        "reference": "work2/tests/reference"
     }
 }
 

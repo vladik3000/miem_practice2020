@@ -195,12 +195,15 @@ def grade_epicbox(
     epicbox.configure(profiles=PROFILES)
     comp = compile_code(compiler, flags, prepared_files)
     if comp['exit_code'] != 0:
-        return 'compile_error'
-        
-    # write test handling !!!!!!!! TOMORROW BITCH SWAG
-    result: dict = epicbox.run(
-        "python", "python3 grade.py", files=files, limits=docker_limits
-    )
+        return {'status': 'error',  'message': 'compilation_error', 'log': comp['stderr'].decode()}
+    for test in tests:
+        test_case = epicbox.run('./main', stdin=test['input'], limits=docker_limits)
+        if test_case['stdout'] != test['output']:
+
+    # write test handling !!!!!!!! FIX THIS TOMORROW BITCH SWAG
+    #result: dict = epicbox.run(
+    #    "python", "python3 grade.py", files=files, limits=docker_limits
+    #)
     logger.debug("Result: %s", result)
 
     grade: dict = {"correct": False, "score": 0, "msg": ""}

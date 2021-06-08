@@ -2,7 +2,6 @@
     "name": "work1",
     "type": "multiple",
     "language": "c",
-    "flags": "-Wall",
     "stop_if_fails": true,
     "memcheck": false,
     "default_limits": {
@@ -26,6 +25,7 @@
         },
         "tests": {
             "inputs_path": "works/work1/ex1/tests/input_tests",
+
             "reference_path": "works/work1/ex1/tests/reference"
         }
     },
