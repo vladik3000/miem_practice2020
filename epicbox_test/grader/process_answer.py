@@ -16,8 +16,12 @@ from config import (
 
 def gitclone(git_url, path):
     git_args = ['git', 'clone', git_url, path]
-    rc = subprocess.call(git_args)
-    return rc == 0
+    g = subprocess.Popen(git_args, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    out, err = g.communicate()
+    print("GIT")
+    print(err)
+    print(out)
+    return g.returncode == 0
 
 def check_file_presence(student_dir, work_script):
     if work_script['type'] == 'multiple':
@@ -39,7 +43,7 @@ def check_file_presence(student_dir, work_script):
 
 def prepare_files(student_dir, work_script):
     files = []
-    for filename in workscript['files']:
+    for filename in work_script['files']:
         filename_path = os.path.join(student_dir, filename)
         with open(filename_path, 'rb') as f:
             files.append({'name': filename, 'content': f.read()})
@@ -100,15 +104,15 @@ def process_answer(submission: dict) -> dict:
     logger.info("Student submission: %s", submission)
     logger.debug("laboratory work name: %s", student['work'])
 
-    student_dir = '/submissions/' + student['name'] + '_' + student['name']
+    student_dir = '/submissions/' + student['name'] + '_' + student['work']
     #clone files to tmp dir
     git_url = student['git']
     if not gitclone(git_url, student_dir):
         subprocess.call(['rm', '-rf', student_dir])
-        return {'error': 'git clone failed'}
+        return [{'error': 'git clone failed'}]
     if not check_file_presence(student_dir, work_script):
         subprocess.call(['rm', '-rf', student_dir])
-        return {'error': 'required files are not present'}
+        return [{'error': 'required files are not present'}]
     if work_script['type'] == 'multiple':
         files = prepare_exercises_files(student_dir, work_script)
     else:
@@ -132,6 +136,10 @@ def process_answer(submission: dict) -> dict:
     # 
     # Run code in a more-or-less secure Docker container
     grades = []
+    if work_script['language'] == 'c':
+        compiler = 'gcc'
+    else:
+        compiler = 'g++'
     if work_script['type'] == 'multiple':
         for exercise in work_script['exercises']:
             tests = prepare_tests(exercise['tests'])
@@ -139,35 +147,47 @@ def process_answer(submission: dict) -> dict:
                 limits = work_script['default_limits']
             else:
                 limits = exercise['limits']
-            grade = grade_epicbox(files[exercise['name']], tests, flags, limits, work_script['stop_if_fails'], work_script['memcheck'])
-            grades += grade
+            grade = grade_epicbox(compiler, files[exercise['name']], tests, flags, limits, work_script['stop_if_fails'], work_script['memcheck'])
+            grades.append(grade)
             logger.info('task: %s\nGrade: %s', exercise['name'], grade)
             
     else:
         tests = prepare_tests(work_script['tests'])
         limits = work_script['default_limits']
-        grade = grade_epicbox(files, tests, flags, limits, work_script['stop_if_fails'], work_script['memcheck'])
-        grades += grade
+        flags = ''
+        if 'flags' in work_script:
+            flags = work_script['flags']
+        grade = grade_epicbox(compiler, files, tests, flags, limits, work_script['stop_if_fails'], work_script['memcheck'])
+        grades.append(grade)
     logger.info("task: %s:\nGrade: %s", work_script['name'], grade)
+    print('GRADES')
+    print(grades)
     return grades
 
-def compile_code(compiler, flags, prepared_files):
+def compile_code(compiler, flags, prepared_files, wd):
     filestr = ''
-    for filedict in files:
+    for filedict in prepared_files:
         filestr += ' ' + filedict['name']
-    compile_str = compiler + flags + filestr + '-o main'
-    comp = epicbox.run(compile_str, files=prepared_files)
+    compile_str = compiler + ' ' + flags + ' ' + filestr + ' -o main'
+    print("COMPILE_STR: " + compile_str)
+    comp = epicbox.run('test_code', compile_str, files=prepared_files, workdir=wd)
+    print("COMPILED SUCCESSFULLY")
     return comp
 
+def check_valgrind(inp, dlimits, wd):
+    valgrind_run = 'valgrind --leak-check=full --error-exitcode=1 ./main'
+    check = epicbox.run('test_code', valgrind_run, limits=dlimits, workdir=wd)
+    return check
 
 def grade_epicbox(
+    compiler: str,
     prepared_files: dict,
     tests: list,
     flags: str, 
     docker_limits: dict,
     stop_if_fails: bool,
     memcheck: bool,
-) -> dict:
+) -> list:
     """
     Running grading script in a separate Docker container.
     https://github.com/StepicOrg/epicbox
@@ -180,59 +200,38 @@ def grade_epicbox(
     :return: Results of grading.
     """
     logger: Logger = get_logger("process_answer")
-    compiler = str()
-    if work_script['language'] == 'c++':
-        compiler = 'g++'
-    else:
-        compiler = 'gcc'
-    PROFILES = [{
+    PROFILES = {
         'test_code': {
             'docker_image': 'test',
             'user': 'root',
             'read_only': False,
             'network_disabled': True,
-    }}]
+    }}
     epicbox.configure(profiles=PROFILES)
     with epicbox.working_directory() as wd:
 
-        comp = compile_code(compiler, flags, prepared_files)
+        comp = compile_code(compiler, flags, prepared_files, wd)
         if comp['exit_code'] != 0:
-            return {'status': 'error',  'message': 'compilation_error', 'log': comp['stderr'].decode()}
+            return [{'status': 'error',  'message': 'compilation_error', 'log': comp['stderr'].decode()}]
         test_results = []
         for test in tests:
-            test_case = epicbox.run('./main', stdin=test['input'], limits=docker_limits)
+            test_case = epicbox.run('test_code', './main', stdin=test['input'], limits=docker_limits, workdir=wd)
+            output = test_case['stdout'].decode()
+            stderr = test_case['stderr'].decode()
             if test_case['timeout']:
-                pass
-            if test_case['oom_killed']:
-                pass
-            if test_case['stdout'].decode() != test['output']:
-                pass
-            #if memcheck do it
-        #return all logs back AND THAT'S IT BITCH
-    # write test handling !!!!!!!! FIX THIS TOMORROW!!!!
-    #result: dict = epicbox.run(
-    #    "python", "python3 grade.py", files=files, limits=docker_limits
-    #)
+                result = {'test': test, 'status': 'timeout', 'stdout': output, 'stderr': stderr, 'exit_code': test_case['exit_code']}
+            elif test_case['oom_killed']:
+                result = {'test': test, 'status': 'memoryout', 'stdout': output, 'stderr': stderr, 'exit_code': test_case['exit_code']}
+            elif output != test['output']:
+                result = {'test': test, 'status': 'failed', 'stdout': output, 'stderr': stderr, 'exit_code': test_case['exit_code']}
+            else:
+                result = {'test': test, 'status': 'ok', 'stdout': output, 'stderr': stderr, 'exit_code': test_case['exit_code']}
+            if stop_if_fails == True and result['status'] != 'ok':
+                test_results.append(result)
+                break
+            if result['status'] == 'ok' and memcheck == True:
+                memory_check = check_valgrind(test_input, limits, wd)
+            test_results.append(result)
     logger.debug("Result: %s", result)
 
-    grade: dict = {"correct": False, "score": 0, "msg": ""}
-
-    # Handling result
-    if result["timeout"]:
-        grade["msg"] = "Проверка заняла слишком много времени."
-    elif result["oom_killed"]:
-        grade["msg"] = "Проверка заняла слишком много памяти."
-    else:
-        try:
-            try:
-                grade["score"] = int(result["stdout"].decode().split("\n")[-2])
-            except ValueError:
-                grade["score"] = float(result["stdout"].decode().split("\n")[-2])
-            grade["msg"] = result["stderr"].decode()  # .split("\n")[-2] + "\n"
-            grade["correct"] = bool(grade["score"])
-        except ValueError:
-            raise InvalidGraderScriptException(
-                "Grading script returned invalid results: %s", result
-            )
-
-    return grade
+    return test_results
