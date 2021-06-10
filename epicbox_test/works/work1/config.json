@@ -1,7 +1,7 @@
 {
     "name": "work1",
     "type": "multiple",
-    "language": "c",
+    "language": "c++",
     "stop_if_fails": true,
     "memcheck": false,
     "default_limits": {
@@ -15,7 +15,7 @@
         "name": "ex1",
         "type": "program",
         "files": [
-            "main.c"
+            "main.cc", "f.cc", "f.h"
             ],
         "limits": {
             "cputime": 4,
@@ -25,7 +25,6 @@
         },
         "tests": {
             "inputs_path": "works/work1/ex1/tests/input_tests",
-
             "reference_path": "works/work1/ex1/tests/reference"
         }
     },
@@ -38,8 +37,9 @@
         "linkfiles": "works/work1/ex2/linking_files",
         "tests": {
             "inputs_path": "works/work1/ex2/tests/input_tests",
-            "correct_outputs_path": "works/work1/ex2/tests/correct_outputs_tests"
+            "outputs_path": "works/work1/ex2/tests/correct_outputs_tests"
         }
     }]
 }
+
 

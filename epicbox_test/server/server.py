@@ -21,10 +21,14 @@ def form_exercise(r):
     all_tests = len(r) 
     passed = 0
     logs = ''
+    i = 0
     for test_case in r:
         if test_case['status'] == 'OK':
             passed += 1
-        logs += 'test ' + str(passed) + ': ' + test_case['status'] + '\n'
+            logs += 'test ' + str(i) + ': ' + test_case['status'] + '\n'
+        else:
+            logs += 'test ' + str(i) + ': ' + test_case['status'] + '\nyour answer:\n' + test_case['answer']['stdout'] + '\nexpected:\n' + test_case['correct_output'] + '\n'
+        i += 1
     logs += 'TESTS PASSED: ' + str(passed) + '/' + str(all_tests) + '\n'
     return logs
 
