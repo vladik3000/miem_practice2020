@@ -1,11 +1,9 @@
 from time import sleep
 from typing import Any
-#from os import getenv
 
 import pika.exceptions
 import epicbox.exceptions
 import requests.exceptions
-#import importlib
 import socket
 
 from queue_configuration import rabbitmq_example
@@ -15,19 +13,12 @@ from logs import get_logger
 from broker.rabbitmq import (
     receive_messages as rabbitmq_receive,
 )
-#from external_grader.broker_handlers.xqueue import receive_messages as xqueue_receive
-
-
 def start_grader() -> None:
-    """
-    Start main grader loop.
-    """
     logger = get_logger("start_grader")
 
     try:
         while True:
             listen_to_broker(rabbitmq_example)
-            #listen_to_broker(queue_config)
             sleep(CONNECTION_RETRY_TIME)
     except AttributeError as exception:
         logger.error(exception, exc_info=True)
@@ -60,19 +51,7 @@ def listen_to_broker(queue_config: Any):
             )
         except pika.exceptions.AMQPConnectionError as exception:
             logger.error("Failed to connect to RabbitMQ broker. %s", exception)
-    #elif queue_config.TYPE == "xqueue":
-    #try:
-        #xqueue_receive(
-        #    queue_config.HOST,
-        #    queue_config.USER,
-        #    queue_config.PASS,
-        #    queue_config.QUEUE,
-        #    queue_config.POLLING_INTERVAL,
-        #)
-    #except requests.exceptions.ConnectionError as exception:
-    #    logger.error("Failed to connect to XQueue broker. %s", exception)
     else:
         logger.error("Unknown message broker type: %s", queue_config.TYPE)
-
 
 start_grader()

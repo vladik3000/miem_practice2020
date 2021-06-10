@@ -106,7 +106,7 @@ def callback_function(
 
     # XQueue header is a unique dict, so it is removed from message to allow caching
     #xqueue_header = message.pop("xqueue_header", None)
-
+    header = message['xqueue_header']
     try:
         xqueue_body: dict = process_answer(message)
         print("XQUEUE_BODY: ", xqueue_body)
@@ -116,31 +116,9 @@ def callback_function(
             current_channel,
             basic_deliver,
             properties,
-            {},
+            xqueue_header=header,
             xqueue_body=xqueue_body,
         )
-    #except InvalidSubmissionException:
-    #    send_reply(
-    #        logger,
-    #        current_channel,
-    #        basic_deliver,
-    #        properties,
-    #        xqueue_header,
-    #        False,
-    #        0,
-    #        "Неверный формат сообщения или ID скрипта проверки.",
-    #    )
-    #except InvalidGraderScriptException:
-    #    send_reply(
-    #        logger,
-    #        current_channel,
-    #        basic_deliver,
-    #        properties,
-    #        xqueue_header,
-    #        False#,
-    #        0,
-    #        "Неверный скрипт проверки.",
-    #    )
     except Exception as exception:
         logger.info("CAUGHT EXCEPTION", exception)
         send_reply(
@@ -190,7 +168,6 @@ def send_reply(
             "score": score,
             "msg": msg,
         }
-
     reply: dict = {"xqueue_header": xqueue_header, "xqueue_body": xqueue_body}
     logger.info("Reply message: %s", reply)
 

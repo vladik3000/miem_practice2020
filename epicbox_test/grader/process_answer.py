@@ -1,5 +1,4 @@
 import json
-import urllib.request
 from pathlib import Path
 from logging import Logger
 
@@ -8,20 +7,11 @@ import epicbox
 import subprocess
 
 from logs import get_logger
-from config import (
-    PATH_DATA_DIRECTORY,
-    PATH_GRADER_SCRIPTS_DIRECTORY,
-    EPICBOX_SETTINGS,
-)
 
 def gitclone(git_url, path):
     git_args = ['git', 'clone', git_url, path]
     g = subprocess.Popen(git_args, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-    out, err = g.communicate()
-    print("GIT")
-    print(err)
-    print(out)
-    return g.returncode == 0
+    return g
 
 def check_file_presence(student_dir, work_script):
     if work_script['type'] == 'multiple':
@@ -85,56 +75,32 @@ def prepare_tests(script):
     return tests
         
 
-def process_answer(submission: dict) -> dict:
-    """
-    Function which receives answers, proceeds them, and returns results.
-
-    :param submission: Student submission received from message broker without unique fields like 
-    xqueue_header or student_info.
-
-    :raises ValueError: Invalid student submission.
-    :raises FailedFilesLoadException: Failed to load required files.
-    :raises ModuleNotFoundError: Failed to find required grading script.
-    """
+def process_answer(submission: dict):
     logger: Logger = get_logger("process_answer")
-    student = submission['body']['student_request']
+    student = submission['xqueue_body']['student_request']
+    date = submission['xqueue_header']['submission_time']
     work_script = dict()
     with open('/works/' + student['work'] + '/config.json', 'r+') as conf:
         work_script = json.load(conf)
     logger.info("Student submission: %s", submission)
     logger.debug("laboratory work name: %s", student['work'])
 
-    student_dir = '/submissions/' + student['name'] + '_' + student['work']
+    student_dir = '/submissions/' + student['name'] + '_' + student['work'] + '_' + str(date)
     #clone files to tmp dir
     git_url = student['git']
-    if not gitclone(git_url, student_dir):
+    # keep only last dir (DO IT AFTER EVERYTHING DONE)
+    g = gitclone(git_url, student_dir)
+    gout, gerr = g.communicate()
+    if g.returncode != 0:
         subprocess.call(['rm', '-rf', student_dir])
-        return [{'error': 'git clone failed'}]
+        return {'status': 'git clone error', 'log': gerr.decode()}
     if not check_file_presence(student_dir, work_script):
         subprocess.call(['rm', '-rf', student_dir])
-        return [{'error': 'required files are not present'}]
+        return {'error': 'required files are not present'}
     if work_script['type'] == 'multiple':
         files = prepare_exercises_files(student_dir, work_script)
     else:
         files = prepare_files(student_dir, work_script)
-    #files = {}
-    #prepared_files, docker_profile, docker_limits = settings_proceed(
-    #    script_name, settings
-    #)
-    #logger.debug("Docker profile: %s", docker_profile)
-    #logger.debug("Docker limits: %s", docker_limits)
-    #logger.debug("Prepared files: %s", prepared_files)
-
-    # grade:
-    # not multiple:
-    # tests: x/x
-    # memcheck x/x
-    # if failed:
-    # test_name: "name_of_the_input_file"
-    # expected: "expected_value"
-    # student_output: "student_output"
-    # 
-    # Run code in a more-or-less secure Docker container
     grades = []
     if work_script['language'] == 'c':
         compiler = 'gcc'
@@ -148,7 +114,7 @@ def process_answer(submission: dict) -> dict:
             else:
                 limits = exercise['limits']
             grade = grade_epicbox(compiler, files[exercise['name']], tests, flags, limits, work_script['stop_if_fails'], work_script['memcheck'])
-            grades.append(grade)
+            grades.append({'name': exercise['name'], 'grade': grade})
             logger.info('task: %s\nGrade: %s', exercise['name'], grade)
             
     else:
@@ -158,7 +124,7 @@ def process_answer(submission: dict) -> dict:
         if 'flags' in work_script:
             flags = work_script['flags']
         grade = grade_epicbox(compiler, files, tests, flags, limits, work_script['stop_if_fails'], work_script['memcheck'])
-        grades.append(grade)
+        return grade
     logger.info("task: %s:\nGrade: %s", work_script['name'], grade)
     print('GRADES')
     print(grades)
@@ -212,25 +178,33 @@ def grade_epicbox(
 
         comp = compile_code(compiler, flags, prepared_files, wd)
         if comp['exit_code'] != 0:
-            return [{'status': 'error',  'message': 'compilation_error', 'log': comp['stderr'].decode()}]
+            return [{'status': 'CE', 'log': comp['stderr'].decode()}]
         test_results = []
         for test in tests:
             test_case = epicbox.run('test_code', './main', stdin=test['input'], limits=docker_limits, workdir=wd)
-            output = test_case['stdout'].decode()
-            stderr = test_case['stderr'].decode()
+            test_case['stdout'] = test_case['stdout'].decode()
+            test_case['stderr'] = test_case['stderr'].decode()
             if test_case['timeout']:
-                result = {'test': test, 'status': 'timeout', 'stdout': output, 'stderr': stderr, 'exit_code': test_case['exit_code']}
+                result = {'status': 'TL', 'test_name': test['test_name'], 'input': test['input'], \
+                                            'correct_output': test['output'], 'answer': test_case}
             elif test_case['oom_killed']:
-                result = {'test': test, 'status': 'memoryout', 'stdout': output, 'stderr': stderr, 'exit_code': test_case['exit_code']}
-            elif output != test['output']:
-                result = {'test': test, 'status': 'failed', 'stdout': output, 'stderr': stderr, 'exit_code': test_case['exit_code']}
+                result = {'status': 'ML', 'test_name': test['test_name'], 'input': test['input'], \
+                                            'correct_output': test['output'], 'answer': test_case}
+            elif test_case['stdout'] != test['output']:
+                result = {'status': 'WA', 'test_name': test['test_name'], 'input': test['input'], \
+                                            'correct_output': test['output'], 'answer': test_case}
             else:
-                result = {'test': test, 'status': 'ok', 'stdout': output, 'stderr': stderr, 'exit_code': test_case['exit_code']}
-            if stop_if_fails == True and result['status'] != 'ok':
+                result = {'status': 'OK', 'test_name': test['test_name'], 'input': test['input'], \
+                                            'correct_output': test['output'], 'answer': test_case}
+            if stop_if_fails == True and result['status'] != 'OK':
                 test_results.append(result)
                 break
-            if result['status'] == 'ok' and memcheck == True:
+            if memcheck == True and result['status'] == 'OK':
                 memory_check = check_valgrind(test_input, limits, wd)
+                if memory_check['exitcode'] != 0:
+                    result['memcheck'] = {'memcheck': 'ERROR', 'log': memory_check['stderr'].decode()}
+                else:
+                    result['memcheck'] = {'memcheck': 'OK'}
             test_results.append(result)
     logger.debug("Result: %s", result)
 

@@ -1,0 +1,33 @@
+# return format
+
+
+# 
+{
+    'status': 'git error',
+    'log': 'git_log',
+}
+
+
+{
+    'status': 'no files error'
+}
+
+
+{
+    'status': 'compilation error',
+    'output': 'compilation_output'
+}
+
+{
+    'status': 'failed',
+    'tests': [
+            {
+                'status': 'wrong answer',
+                'test_name' = 'test1'
+
+                'test': {
+                                'test_name': 'test1',
+                                'input': 'input_value',
+                                'output': 'output_value'
+                                },
+                            

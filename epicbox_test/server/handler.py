@@ -36,20 +36,8 @@ class MessageHandler(object):
         self.config['user'] = USER
         self.config['pass'] = PASS
         self.config['queue'] = QUEUE
-        self.response = str()
+        self.response = dict()
         self.create_queue_connection()
-    # noinspection PyAttributeOutsideInit
-    #def initialize(
-    #        self,
-    #        bot_handler: Any
-    #) -> None:
-    #    self.bot_handler = bot_handler
-    #    self.config = bot_handler.get_config_info('rabbitmq')
-    #    self.gradings = {}
-    #    self.response = {}
-
-    #    self.create_queue_connection()
-
     # noinspection PyAttributeOutsideInit
     def create_queue_connection(self):
         # RabbitMQ RPC
@@ -75,67 +63,20 @@ class MessageHandler(object):
             auto_ack=True
         )
 
-    def handle_message(
-            self,
-            message: Dict[str, str]#,
-            #bot_handler: Any
-    ) -> None:
-        pass
-        #bot_response = ""
-        #content = message["content"]
-        #words = content.split(sep=None, maxsplit=2)
-
-        #logging.getLogger().info("Received message '{0}' from '{1}'.".format(
-        #    content, message["sender_full_name"])
-        #)
-
-        #if not words or words[0] == "help":
-        #    bot_response = (
-        #        "Бот для проверки заданий.\n"
-        #        "\n"
-        #        "Команды бота:\n"
-        #        "'@**External Grader**' — описание и список команд.\n"
-        #        "'@**External Grader** grade <id задания> <ответ>' — проверка задания.\n"
-        #    )
-        #elif words[0] == "grade":
-        #    if len(words) != 3:
-        #        bot_response = (
-        #            "Ошибка. Ожидаемый формат команды:\n"
-        #            "\n"
-        #            "'@**External Grader** grade <id задания> <ответ>'\n"
-        #        )
-        #    else:
-        #        self.bot_handler.send_reply(
-        #            message,
-        #            "Пожалуйста, подождите. Ответ проверяется внешним сервисом.\n"
-        #       )
-
-                # Grading the answer
-        #self.rabbitmq_grade_answer(message)
-        #else:
-        #    bot_response = (
-        #        "Неизвестная команда.\n"
-        #        "\n"
-        #        "Наберите '@**External Grader**' для получения справки.\n"
-        #    )
-
-        if bot_response:
-            self.bot_handler.send_reply(message, bot_response)
-
     def rabbitmq_grade_answer(
             self,
-            #script_id: str,
-            #answer: str,
             message: Dict[str, str]
     ) -> None:
         corr_id = str(uuid.uuid4())
         self.response = None
         print("GRADING")
         payload = {
-            "header": {
-                "submission_time": datetime.timestamp(datetime.now())
+            "xqueue_header": {
+                "submission_time": datetime.timestamp(datetime.now()),
+                "name": message['name'],
+                "work": message['work']
             },
-            "body": {
+            "xqueue_body": {
                 "student_request": message,
             }
         }
@@ -169,7 +110,6 @@ class MessageHandler(object):
                 self.create_queue_connection()
 
         while self.response is None:
-            print("piZda")
             self.connection.process_data_events()
 
     def on_callback(
@@ -180,21 +120,4 @@ class MessageHandler(object):
             body: bytes
     ):
         logging.getLogger().info("Received message from RabbitMQ.")
-        print("RECIEVED MESSAGE FROM RABBITMQ")
-        #self.response[properties.correlation_id] = body
-        self.response = str(body.decode()) # change it ofc 
-        print("SELF.RESPONSE", self.response)
-        #msg = json.loads(self.response[properties.correlation_id].decode("utf8"))
-        #message = self.gradings[msg["xqueue_header"]["submission_key"]]
-        #self.reponse = message
-        #bot_response = (
-        #    "@**" + message["sender_full_name"] + "**\n"
-        #    "\n"
-        #    "Оценка:\n"
-        #    "```\n" + str(msg["xqueue_body"]["score"]) + "\n```\n"
-        #    "Сообщение:\n"
-        #    "```\n" + str(msg["xqueue_body"]["msg"]) + "\n```"
-        #)
-        #self.bot_handler.send_reply(message, bot_response)
-
-#handler_class = ExternalGraderHandler
+        self.response = json.loads(body.decode())

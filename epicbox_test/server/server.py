@@ -17,6 +17,32 @@ message_schema = {
 async def hello(request):
     return web.Response(text="Hello, world")
 
+def form_exercise(r):
+    all_tests = len(r) 
+    passed = 0
+    logs = ''
+    for test_case in r:
+        if test_case['status'] == 'OK':
+            passed += 1
+        logs += 'test ' + str(passed) + ': ' + test_case['status'] + '\n'
+    logs += 'TESTS PASSED: ' + str(passed) + '/' + str(all_tests) + '\n'
+    return logs
+
+
+def humanize_response(response, message):
+    header = message['work'] + '\n'
+    print(response)
+    if 'name' in response[0]:
+        for exercise in response:
+            name = exercise['name']
+            header += name + '\n'
+            header += form_exercise(exercise['grade'])
+    else:
+        header += form_exercise(response)
+    return header
+    
+    
+
 async def post_handler(request):
     try:
         message = await request.json()
@@ -25,7 +51,9 @@ async def post_handler(request):
     except Exception as e:
         return web.Response(text=str(e))
     response = proccess_message(message)
-    return web.Response(text=response)
+    print(response)
+    human_response = humanize_response(response['xqueue_body'], message)
+    return web.Response(text=str(human_response))
 
 
 app = web.Application()
